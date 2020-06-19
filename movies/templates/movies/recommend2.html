@@ -1,0 +1,18 @@
+{% extends 'base.html' %}
+
+{% block body %}
+<h1>{{ request.user.username }}님의 Review 평점 에 따른 영화 추천</h1>
+<hr>
+<div class=row>
+    {% for movie in movie_list|slice:"1:12" %}
+        <div class="card col-lg-3 col-6" style="width: 18rem;">
+            <img src="https://image.tmdb.org/t/p/w342/{{ movie.poster_path }}" class="card-img-top " alt="영화 사진">
+            <div class="card-body">
+            <h5 class="card-title">{{ movie.title }} <span class="badge badge-warning">{{ movie.vote_average }}</span></h5>
+            <p class="card-text">{{ movie.overview|truncatechars:80 }}</p>
+            <a href="{% url 'movies:detail' movie.pk %}" class="btn btn-secondary">DETAIL</a>
+            </div>
+        </div>
+    {% endfor %}
+</div>
+{% endblock %}

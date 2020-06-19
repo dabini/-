@@ -1,0 +1,20 @@
+{% extends 'base.html' %}
+{% load bootstrap4 %}
+
+{% block title %} Review Create {% endblock %}
+
+{% block body %}
+  <br>
+  {% if request.resolver_match.url_name == 'reviews_create' %}
+    <h1 class='text-center'>리뷰 작성</h1>
+  {% else %}
+    <h1 class='text-center'>리뷰 수정</h1>
+  {% endif %}
+  <form action="" method='POST'>
+    {% csrf_token %}
+    {% bootstrap_form form %}
+    <div class="d-flex justify-content-center">
+      <button class="btn btn-primary">작성 완료</button>
+    </div>
+  </form>
+{% endblock %}

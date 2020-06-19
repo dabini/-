@@ -1,0 +1,12 @@
+{% extends 'base.html' %}
+{% load bootstrap4 %}
+
+{% block body %}
+    <form action="" method="POST">
+        {% csrf_token %}
+        {% bootstrap_form form %}
+        <div class="d-flex justify-content-center">
+            <button class="btn btn-primary">회원가입</button>
+        </div>
+    </form>
+{% endblock %}s

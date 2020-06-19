@@ -1,0 +1,77 @@
+{% extends 'base.html' %}
+{% load bootstrap4 %}
+
+{% block title %} Review Detail {% endblock %}
+
+{% block body %}
+  <br>
+  <h2 class='text-center'>{{ review.title }}</h2>
+  <div class="d-flex justify-content-between">
+    <a href="{%url 'movies:detail' movie.pk %}"><button class="btn btn-secondary mx-1">뒤로가기</button></a>
+    <div>
+      {% if request.user == review.user %}
+        <a href="{%url 'movies:reviews_update' movie.pk review.pk %}"><button class="btn btn-secondary mx-1">수정</button></a>
+        <a href="{%url 'movies:reviews_delete' movie.pk review.pk %}"><button class="btn btn-secondary">삭제</button></a>
+      {% endif %}
+    </div>
+  </div>
+  <hr>
+  <div class="d-flex justify-content-end">
+    <p class="mx-4">{{ review.user }} </p>
+    <p>{{ review.created_at }}</p>
+  </div>
+  <h5>{{ review.content }}</h5>
+  <hr>
+  
+  <div class="d-flex justify-content-end">
+    <h5 class="mr-2 text-center">{{ review.like_users.all|length }}명</h5>
+    {% if user not in review.like_users.all %}
+      {% if user not in review.hate_users.all %}
+      <h2>
+        <a href="{% url 'movies:review_like' movie.pk review.pk %}"><i class="far fa-thumbs-up mr-4" style="color: gray;"></i></a>
+      </h2>
+      <h2>
+        <a href="{% url 'movies:review_hate' movie.pk review.pk %}"><i class="far fa-thumbs-down" style="color: gray;" ></i></a>
+      </h2>
+      {%endif%}
+    {%endif%}
+    {% if user in review.like_users.all %}
+      <h2>
+        <a href="{% url 'movies:review_like' movie.pk review.pk %}"><i class="far fa-thumbs-up mr-4" style="color: red"></i></a>
+      </h2>
+      <h2>
+        <a href=""><i class="far fa-thumbs-down" style="color: gray;" ></i></a>
+      </h2>
+    {% endif %}
+
+    {% if user in review.hate_users.all %}
+      <h2>
+        <a href=""><i class="far fa-thumbs-up mr-4" style="color: gray;"></i></a>
+      </h2>
+      <h2>
+        <a href="{% url 'movies:review_hate' movie.pk review.pk %}"><i class="far fa-thumbs-down" style="color: blue;"></i></a>
+      </h2>
+      {% endif %}
+    <h5>{{ review.hate_users.all|length }}명</h5>
+  </div>
+
+
+  <hr>
+  {% for comment in review.comment_set.all %}
+      <p>{{ comment.user }}</p>
+      <p>{{ comment.content }}</p>
+      {% if comment.user == request.user %}
+        <a href="{% url 'movies:comment_delete' movie.pk review.pk comment.pk %}">
+          <button class="btn btn-secondary">삭제</button>
+        </a>
+      {% endif %}
+      <hr>
+  {% endfor %}
+  <form action="{%url 'movies:comment_create' movie.pk review.pk %}" method="POST">
+    {% csrf_token %}
+    {% bootstrap_form form %}
+    <div class="d-flex justify-content-end">
+      <button class='btn btn-primary'>submit</button>
+    </div>
+  </form>
+{% endblock %}

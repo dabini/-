@@ -1,0 +1,66 @@
+{% extends 'base.html' %}
+{% load bootstrap4 %}
+{% load bootstrap_pagination %}
+
+{% block css %}
+  <style>
+    .movieid :hover {
+      text-decoration: underline;
+    }
+  </style>
+{% endblock %}
+{% block body %}
+
+  <h2 class="text-center my-1">MOVIES</h2>
+  <br>
+  <hr>
+    <div class="row">
+    {% for movie in page_obj %}
+    <div class="card col-lg-3 col-6" style="width: 18rem;">
+      <img src="https://image.tmdb.org/t/p/w342/{{ movie.poster_path }}" class="card-img-top " alt="영화 사진">
+      <div class="card-body">
+        <a href="{% url 'movies:detail' movie.pk %}" class="text-dark">
+          <h5 class="card-title">{{ movie.title }}
+        </a><span class="badge badge-warning">{{ movie.vote_average }}</span></h5>
+        <p class="card-text">{{ movie.overview|truncatechars:80 }}</p>
+        <div class="d-flex justify-content-between">
+          <div>
+          {% if user in movie.like_users.all %}
+            <i class="fas fa-heart fa-lg like-button" style="color:crimson" data-id='{{ movie.id }}'></i>
+          {% else %}
+            <i class="fas fa-heart fa-lg like-button" style="color:gray" data-id='{{ movie.id }}'></i>
+          {% endif %}
+          <span class="like-count-{{ movie.id }}">{{ movie.like_users.count }}명</span>
+          </div>
+        <a href="{% url 'movies:detail' movie.pk %}" class="btn btn-secondary">DETAIL</a>
+        </div>
+      </div>
+    </div>
+    {% endfor %}
+  </div>
+    
+    <br>
+
+    <div class="d-flex justify-content-center">
+        {% bootstrap_paginate page_obj range=10 %}
+    </div>
+
+    <script>
+      const likeBtns = document.querySelectorAll('.like-button')
+      likeBtns.forEach(likeBtn => {
+        likeBtn.addEventListener('click', function(event){
+          const movieId = event.target.dataset.id
+          axios.get(`/movies/${movieId}/like/`)
+          .then(response => {
+            document.querySelector(`.like-count-${movieId}`).innerText = response.data.count+'명'
+            if (response.data.liked){
+              event.target.style.color = 'crimson'
+            } else{
+              event.target.style.color = 'gray'
+            }
+          })
+        })
+      })
+
+    </script>
+{% endblock %}
